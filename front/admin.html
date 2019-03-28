@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <title>Тест к дню открытых дверей ГБПОУИО "ИАТ"</title>
+    <style>
+        body, html {
+            height: 100%;
+        }
+
+        input[type=checkbox] {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        label {
+            padding-left: 1rem;
+        }
+
+        #resultDiv {
+            padding-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a class="btn btn-success" href="javascript: void(0)" onclick="swith(1)">Включить результат</a>
+    <a class="btn btn-danger" href="javascript: void(0)" onclick="swith(0)">Отключить результат</a>
+    <pre id="statusDiv"></pre>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+<script src='https://cdn.bootcss.com/socket.io/2.0.3/socket.io.js'></script>
+<script>
+    let s;
+    $(function () {
+        s = io('http://10.100.3.20:2020');
+        s.on('connect', function () {
+            console.log('connected');
+        });
+    });
+
+    function swith(status) {
+        $.ajax({
+            url: "/switch",
+            data: {
+                key: '0712',
+                status: status
+            },
+            dataType: 'json',
+            type: "GET"
+        }).done(function (response) {
+            if (response != undefined) {
+                if (response.status === true) {
+                    s.emit('user_results');
+                    $("#statusDiv").html('status switched to ' + status);
+                } else if (response.status === false || response.status == 'error') {
+                    alert(response.error);
+                } else {
+                    alert('Ошибка запроса. Обратитесь к администратору.');
+                }
+            } else {
+                alert('Ошибка запроса. Обратитесь к администратору.');
+            }
+        });
+    }
+</script>
+</body>
+</html>

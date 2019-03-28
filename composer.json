@@ -1,0 +1,14 @@
+{
+  "require": {
+    "workerman/phpsocket.io": "^1.1",
+    "catfan/medoo": "^1.6",
+    "robmorgan/phinx": "^0.10.6",
+    "silex/silex": "2.0",
+    "wisembly/elephant.io": "^3.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "": "src/"
+    }
+  }
+}
